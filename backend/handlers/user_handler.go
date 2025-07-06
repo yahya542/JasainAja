@@ -17,8 +17,8 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	query := "INSERT INTO users (username, email, password, time_balance) VALUES ($1, $2, $3, $4)"
-	_, err = database.DB.Exec(query, user.Name, user.Email, user.Password, user.TimeBalance)
+	query := "INSERT INTO users (username, email, password ) VALUES ($1, $2, $3)"
+	_, err = database.DB.Exec(query, user.Username, user.Email, user.Password)
 
 	if err != nil {
 		log.Println("❌ Error insert user:", err) // <--- tambahkan ini
@@ -42,23 +42,26 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var user models.User
-	query := `SELECT user_id, username, password FROM users WHERE username = $1 AND password = $2`
-	err = database.DB.QueryRow(query, input.Username, input.Password).Scan(
-		&user.UserID, &user.Name, &user.Password,
+	query := `SELECT user_id, username, password FROM users WHERE username = $1`
+	err = database.DB.QueryRow(query, input.Username).Scan(
+		&user.UserID, &user.Username, &user.Password,
 	)
 
 	if err != nil {
 		log.Println("❌ Login error:", err)
-		http.Error(w, "Login failed", http.StatusUnauthorized)
+		http.Error(w, "Username not found", http.StatusUnauthorized)
+		return
+	}
+
+	if user.Password != input.Password {
+		http.Error(w, "Incorrect password", http.StatusUnauthorized)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{
-		"message": "Login successful",
-		"user_id": fmt.Sprintf("%d", user.UserID),
-		"username": user.Name,
+		"message":  "Login successful",
+		"user_id":  fmt.Sprintf("%d", user.UserID),
+		"username": user.Username,
 	})
 }
-
-
