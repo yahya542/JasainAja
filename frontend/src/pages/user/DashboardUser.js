@@ -1,8 +1,16 @@
 import { useState } from "react";
-import "./DashboardUser.css";
+import "../../css/db_user.css"; 
+import { useNavigate } from 'react-router-dom';
 
 function DashboardUser() {
   const [activeTab, setActiveTab] = useState("services");
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    // Hapus data login dari localStorage
+    localStorage.removeItem('user');
+    // Redirect ke halaman login
+    navigate('/login/user');
+  };
 
   const renderContent = () => {
     switch (activeTab) {
@@ -42,6 +50,12 @@ function DashboardUser() {
           onClick={() => setActiveTab("history")}
         >
           📜 Riwayat
+        </button>
+        <button
+          onClick={handleLogout}
+          className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg shadow"
+        >
+          🔓 Logout
         </button>
       </nav>
 

@@ -13,10 +13,10 @@ function LoginUser() {
     setError("");
 
     try {
-      const response = await fetch("http://localhost:8080/api/login/user", {
+      const response = await fetch("http://localhost:8080/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: username, password }),
+        body: JSON.stringify({ username, password }),
       });
 
       if (response.ok) {
@@ -31,6 +31,9 @@ function LoginUser() {
       setError("Terjadi kesalahan saat login.");
     }
   };
+
+
+  
 
   return (
     <div className="login-user-container">
@@ -55,6 +58,7 @@ function LoginUser() {
         <button type="submit">Masuk</button>
         {error && <p className="error">{error}</p>}
       </form>
+      
     </div>
   );
 }

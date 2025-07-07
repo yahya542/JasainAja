@@ -4,7 +4,7 @@ import "../../css/RegisterUser.css";
 
 function RegisterUser() {
   const [formData, setFormData] = useState({
-    name: "",
+    username: "",
     email: "",
     password: "",
   });
@@ -12,7 +12,7 @@ function RegisterUser() {
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setFormData({...formData, [e.target.name]: e.target.value});
+    setFormData({...formData, [e.target.username]: e.target.value});
   };
 
   const handleSubmit = async (e) => {
@@ -42,7 +42,7 @@ function RegisterUser() {
     <div className="register-container">
       <h2>Daftar Akun User</h2>
       <form onSubmit={handleSubmit} className="register-form">
-        <input type="text" name="name" placeholder="Nama Pengguna" required onChange={handleChange} />
+        <input type="text" name="username" placeholder="Nama Pengguna" required onChange={handleChange} />
         <input type="email" name="email" placeholder="Email" required onChange={handleChange} />
         <input type="password" name="password" placeholder="Password" required onChange={handleChange} />
         <button type="submit">Daftar</button>
