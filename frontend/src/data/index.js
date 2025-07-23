@@ -2,21 +2,33 @@ export const data = {
   banner: [
     {
       to: "/link",
-      img: "../../images/banner/Banner_2.webp",
-      title: "First slide label",
-      description: "Nulla vitae elit libero, a pharetra augue mollis interdum",
+      img: "../../images/banner/banner1.png",
+     
     },
     {
       to: "/link",
-      img: "../../images/banner/Banner_3.webp",
-      title: "Second slide label",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      img: "../../images/banner/banner2.png",
+     
     },
     {
       to: "/link",
-      img: "../../images/banner/Banner_1.webp",
-      title: "Third slide label",
-      description: " Praesent commodo cursus magna, vel scelerisque nisl.",
+      img: "../../images/banner/banner3.png",
+     
+    },
+     {
+      to: "/link",
+      img: "../../images/banner/banner4.png",
+     
+    },
+     {
+      to: "/link",
+      img: "../../images/banner/banner5.png",
+     
+    },
+     {
+      to: "/link",
+      img: "../../images/banner/banner6.png",
+     
     },
   ],
   iconProducts: [

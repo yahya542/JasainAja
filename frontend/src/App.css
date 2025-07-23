@@ -85,3 +85,7 @@
 .accordion-icon-button.collapsed {
   border-bottom: none;
 }
+/* Ubah warna latar belakang seluruh halaman jadi kuning */
+body {
+  background-color: yellow !important;
+}
