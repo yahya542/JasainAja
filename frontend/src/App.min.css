@@ -2,3 +2,20 @@
 body {
   background-color: #ffd221 !important;
 }
+.col-md-9, .row, 
+.p-3 border-bottom bg-light, .bg-light {
+  background-color: #ffd221!important; /* ganti dengan warna yang kamu mau */
+}
+.carousel slide mb-3{
+    margin-top: 70;
+}
+.collapse, .navbar.bg-dark.p-0, .navbar-brand,  .container-fluid, .nav-aja, .nav-link{
+    background-color: #ffd221;
+    color : black
+}
+.navbar-nav{
+    background-color: #ffff;
+}
+#carouselHomeBanner .carousel-indicators {
+  display: none !important;
+}

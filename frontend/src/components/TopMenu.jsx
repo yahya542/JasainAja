@@ -20,7 +20,7 @@ const TopMenu = () => {
         </button>
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav">
-            <li className="nav-item dropdown">
+            <li className="nav-aja dropdown">
               <button
                 className="btn nav-link dropdown-toggle fw-bold"
                 id="navbarDropdown"
@@ -79,37 +79,37 @@ const TopMenu = () => {
                 </li>
               </ul>
             </li>
-            <li className="nav-item">
+            <li className="nav-aja">
               <Link className="nav-link" to="/category">
                 Fashion
               </Link>
             </li>
-            <li className="nav-item">
+            <li className="nav-aja">
               <Link className="nav-link" to="/category">
                 Supermarket
               </Link>
             </li>
-            <li className="nav-item">
+            <li className="nav-aja">
               <Link className="nav-link" to="/category">
                 Electronics
               </Link>
             </li>
-            <li className="nav-item">
+            <li className="nav-aja">
               <Link className="nav-link" to="/category">
                 Furniture
               </Link>
             </li>
-            <li className="nav-item">
+            <li className="nav-aja">
               <Link className="nav-link" to="/category">
                 Garden & Outdoors
               </Link>
             </li>
-            <li className="nav-item">
+            <li className="nav-aja">
               <Link className="nav-link" to="/category">
                 Jewellery
               </Link>
             </li>
-            <li className="nav-item">
+            <li className="nav-aja">
               <Link className="nav-link" to="/documentation">
                 Documentation
               </Link>
