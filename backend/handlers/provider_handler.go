@@ -18,8 +18,8 @@ func RegisterProvider(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	query := `INSERT INTO providers (name, email, password) VALUES ($1, $2, $3)`
-	_, err = database.DB.Exec(query, provider.Name, provider.Email, provider.Password)
+	query := `INSERT INTO users (name, email, password, user_type) VALUES ($1, $2, $3, $4)`
+	_, err = database.DB.Exec(query, provider.Name, provider.Email, provider.Password, "provider")
 	if err != nil {
 		log.Println("❌ Failed to register provider:", err)
 		http.Error(w, "Failed to register provider", http.StatusInternalServerError)
@@ -32,7 +32,7 @@ func RegisterProvider(w http.ResponseWriter, r *http.Request) {
 
 func LoginProvider(w http.ResponseWriter, r *http.Request) {
 	var input struct {
-		Name     string `json:"name"`     // login via name
+		Email    string `json:"email"`     // login via name
 		Password string `json:"password"`
 	}
 	err := json.NewDecoder(r.Body).Decode(&input)
@@ -42,8 +42,8 @@ func LoginProvider(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var provider models.Provider
-	query := `SELECT provider_id, name, password FROM providers WHERE name = $1`
-	err = database.DB.QueryRow(query, input.Name).Scan(
+	query := `SELECT user_id, name, password FROM users WHERE email = $1 AND user_type = 'provider'`
+	err = database.DB.QueryRow(query, input.Email).Scan(
 		&provider.Provider_id, &provider.Name, &provider.Password,
 	)
 
