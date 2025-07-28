@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 
+	"golang.org/x/crypto/bcrypt"
 	"jasainaja-backend/database"
 	"jasainaja-backend/models"
 )
@@ -17,9 +18,14 @@ func RegisterProvider(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid input", http.StatusBadRequest)
 		return
 	}
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(provider.Password), bcrypt.DefaultCost)
+	if err != nil {
+		http.Error(w, "Failed to hash password", http.StatusInternalServerError)
+		return
+	}
 
-	query := `INSERT INTO users (name, email, password, user_type) VALUES ($1, $2, $3, $4)`
-	_, err = database.DB.Exec(query, provider.Name, provider.Email, provider.Password, "provider")
+	query := `INSERT INTO users (username, email, password, user_type) VALUES ($1, $2, $3, $4)`
+	_, err = database.DB.Exec(query, provider.Name, provider.Email, string(hashedPassword),  "provider")
 	if err != nil {
 		log.Println("❌ Failed to register provider:", err)
 		http.Error(w, "Failed to register provider", http.StatusInternalServerError)
@@ -32,7 +38,7 @@ func RegisterProvider(w http.ResponseWriter, r *http.Request) {
 
 func LoginProvider(w http.ResponseWriter, r *http.Request) {
 	var input struct {
-		Email    string `json:"email"`     // login via name
+		Email    string `json:"email"` 
 		Password string `json:"password"`
 	}
 	err := json.NewDecoder(r.Body).Decode(&input)
@@ -42,7 +48,7 @@ func LoginProvider(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var provider models.Provider
-	query := `SELECT user_id, name, password FROM users WHERE email = $1 AND user_type = 'provider'`
+	query := `SELECT user_id, username, password FROM users WHERE email = $1 AND user_type = 'provider'`
 	err = database.DB.QueryRow(query, input.Email).Scan(
 		&provider.Provider_id, &provider.Name, &provider.Password,
 	)
@@ -53,7 +59,9 @@ func LoginProvider(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if provider.Password != input.Password {
+	// 🔑 Compare hashed password from DB with input password
+	err = bcrypt.CompareHashAndPassword([]byte(provider.Password), []byte(input.Password))
+	if err != nil {
 		http.Error(w, "Incorrect password", http.StatusUnauthorized)
 		return
 	}
@@ -65,4 +73,3 @@ func LoginProvider(w http.ResponseWriter, r *http.Request) {
 		"name":        provider.Name,
 	})
 }
-

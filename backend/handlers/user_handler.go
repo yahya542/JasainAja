@@ -7,6 +7,7 @@ import (
     "net/http"
     "jasainaja-backend/database"
     "jasainaja-backend/models"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func RegisterUser(w http.ResponseWriter, r *http.Request) {
@@ -16,9 +17,14 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid input", http.StatusBadRequest)
 		return
 	}
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		http.Error(w, "Failed to hash password", http.StatusInternalServerError)
+		return
+	}
 
 	query := "INSERT INTO users (username, email, password,user_type ) VALUES ($1, $2, $3, $4)"
-	_, err = database.DB.Exec(query, user.Username, user.Email, user.Password, "client")
+	_, err = database.DB.Exec(query, user.Username, user.Email, string(hashedPassword), "client")
 
 	if err != nil {
 		log.Println("❌ Error insert user:", err) // <--- tambahkan ini
@@ -42,7 +48,7 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var user models.User
-	query := `SELECT user_id, username, password FROM users WHERE username = $1 AND user_type = "client"`
+	query := `SELECT user_id, username, password FROM users WHERE username = $1 AND user_type = 'client'`
 	err = database.DB.QueryRow(query, input.Username).Scan(
 		&user.UserID, &user.Username, &user.Password,
 	)
@@ -53,7 +59,8 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if user.Password != input.Password {
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password))
+	if err != nil {
 		http.Error(w, "Incorrect password", http.StatusUnauthorized)
 		return
 	}
