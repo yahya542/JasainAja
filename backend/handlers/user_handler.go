@@ -17,8 +17,8 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	query := "INSERT INTO users (username, email, password ) VALUES ($1, $2, $3)"
-	_, err = database.DB.Exec(query, user.Username, user.Email, user.Password)
+	query := "INSERT INTO users (username, email, password,user_type ) VALUES ($1, $2, $3, $4)"
+	_, err = database.DB.Exec(query, user.Username, user.Email, user.Password, "client")
 
 	if err != nil {
 		log.Println("❌ Error insert user:", err) // <--- tambahkan ini
@@ -42,7 +42,7 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var user models.User
-	query := `SELECT user_id, username, password FROM users WHERE username = $1`
+	query := `SELECT user_id, username, password FROM users WHERE username = $1 AND user_type = "client"`
 	err = database.DB.QueryRow(query, input.Username).Scan(
 		&user.UserID, &user.Username, &user.Password,
 	)
