@@ -11,15 +11,15 @@ import (
 )
 
 func RegisterProvider(w http.ResponseWriter, r *http.Request) {
-	var provider models.Provider
+	var provider models.User
 	err := json.NewDecoder(r.Body).Decode(&provider)
 	if err != nil {
 		http.Error(w, "Invalid input", http.StatusBadRequest)
 		return
 	}
 
-	query := `INSERT INTO providers (name, email, password) VALUES ($1, $2, $3)`
-	_, err = database.DB.Exec(query, provider.Name, provider.Email, provider.Password)
+	query := `INSERT INTO users (username, email, password, user_type) VALUES ($1, $2, $3, $4)`
+	_, err = database.DB.Exec(query, provider.Username, provider.Email, provider.Password, "provider")
 	if err != nil {
 		log.Println("❌ Failed to register provider:", err)
 		http.Error(w, "Failed to register provider", http.StatusInternalServerError)
@@ -32,7 +32,7 @@ func RegisterProvider(w http.ResponseWriter, r *http.Request) {
 
 func LoginProvider(w http.ResponseWriter, r *http.Request) {
 	var input struct {
-		Name     string `json:"name"`     // login via name
+		Email    string `json:"email"`
 		Password string `json:"password"`
 	}
 	err := json.NewDecoder(r.Body).Decode(&input)
@@ -41,12 +41,11 @@ func LoginProvider(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var provider models.Provider
-	query := `SELECT provider_id, name, password FROM providers WHERE name = $1`
-	err = database.DB.QueryRow(query, input.Name).Scan(
-		&provider.Provider_id, &provider.Name, &provider.Password,
+	var provider models.User
+	query := `SELECT user_id, username, password FROM users WHERE email = $1 AND user_type = 'provider'`
+	err = database.DB.QueryRow(query, input.Email).Scan(
+		&provider.UserID, &provider.Username, &provider.Password,
 	)
-
 	if err != nil {
 		log.Println("❌ Login error:", err)
 		http.Error(w, "Provider not found", http.StatusUnauthorized)
@@ -61,8 +60,7 @@ func LoginProvider(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{
 		"message":     "Login successful",
-		"provider_id": fmt.Sprintf("%d", provider.Provider_id),
-		"name":        provider.Name,
+		"provider_id": fmt.Sprintf("%d", provider.UserID),
+		"name":        provider.Username,
 	})
 }
-

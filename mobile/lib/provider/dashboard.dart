@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
-class HomePage extends StatelessWidget {
+class ProviderDashboard extends StatelessWidget {
+  final String username;
+
+  const ProviderDashboard({Key? key, required this.username}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
